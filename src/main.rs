@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate impl_ops;
 use indicatif::ProgressBar;
 mod vec3;
 
