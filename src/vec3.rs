@@ -2,6 +2,8 @@ pub type Color = Vec3;
 pub type Loc = Vec3;
 
 use std::ops;
+use std::ops::Neg;
+
 #[derive(Debug, PartialEq)]
 pub struct Vec3 {
     pub e0: f64,
@@ -64,6 +66,20 @@ impl_op_ex!(+ |a: &Vec3, b: &Vec3| -> Vec3 {
 });
 
 impl_op_ex!(-|a: &Vec3, b: &Vec3| -> Vec3 { a + (-1.0 * b) });
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+    fn neg(self) -> Vec3 {
+        self * (-1.0) 
+    }
+}
+
+impl Neg for &Vec3 {
+    type Output = Vec3;
+    fn neg(self) -> Vec3 {
+        self * (-1.0)
+    }
+}
 
 #[cfg(test)]
 mod tests {
