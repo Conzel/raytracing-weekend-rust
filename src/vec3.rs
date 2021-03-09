@@ -2,7 +2,7 @@ pub type Color = Vec3;
 pub type Loc = Vec3;
 
 use std::ops;
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Vec3 {
     pub e0: f64,
     pub e1: f64,
@@ -64,3 +64,63 @@ impl_op_ex!(+ |a: &Vec3, b: &Vec3| -> Vec3 {
 });
 
 impl_op_ex!(-|a: &Vec3, b: &Vec3| -> Vec3 { a + (-1.0 * b) });
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const TEST_VEC_1: Vec3 = Vec3::new(1.0,2.0,3.0);
+    const TEST_VEC_2: Vec3 = Vec3::new(-1.0,0.0,1.0);
+
+    #[test]
+    fn test_add_vectors() {
+        let res = Vec3::new(0.0,2.0,4.0);
+        assert_eq!(TEST_VEC_1 + TEST_VEC_2, res);
+        assert_eq!(TEST_VEC_2 + TEST_VEC_1, res);
+    }
+
+    #[test]
+    fn test_sub_vectors() {
+        assert_eq!(TEST_VEC_1 - TEST_VEC_2, Vec3::new(2.0, 2.0, 2.0));
+    }
+
+    #[test]
+    fn test_mul_scalar() {
+        let res = Vec3::new(2.0,4.0,6.0);
+        assert_eq!(TEST_VEC_1 * 2.0, res);
+        assert_eq!(2.0 * TEST_VEC_1, res);
+    }
+
+    #[test]
+    fn test_dot_product() {
+        assert_eq!(TEST_VEC_1.dot(&TEST_VEC_2), 2.0);
+    }
+
+    #[test]
+    fn test_lengths() {
+        assert_eq!(TEST_VEC_2.length(), (2.0 as f64).sqrt());
+        assert_eq!(TEST_VEC_2.length_squared(), 2.0);
+    }
+
+    #[test]
+    fn test_unit_vector_creation() {
+        let sqrt_one_half = 1.0/(2.0 as f64).sqrt();
+        assert_eq!(TEST_VEC_2.unit_vector(), Vec3::new(-sqrt_one_half, 0.0, sqrt_one_half));
+    }
+
+    #[test]
+    fn test_hadamard_product() {
+        assert_eq!(TEST_VEC_1.hadamard(&TEST_VEC_2), Vec3::new(-1.0, 0.0, 3.0));
+    }
+
+    #[test]
+    fn test_color_validation() {
+        assert!(!valid_color(&Vec3::new(1.1, 0.0, 1.0)));
+        assert!(valid_color(&Vec3::new(0.8, 0.0, 1.0)));
+        assert!(!valid_color(&Vec3::new(0.8, 0.0, -0.3)));
+    }
+
+    #[test]
+    fn test_color_string() {
+        assert_eq!("255 255 255", color_string(&Vec3::new(1.0,1.0,1.0)));
+    }
+}
