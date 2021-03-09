@@ -21,6 +21,7 @@ impl Ray {
     }
 }
 
+#[cfg(tests)]
 mod tests {
     use super::*;
     const RAY: Ray = Ray::new(Vec3::new(1.0,0.0,-1.0), Vec3::new(-1.0,0.0,1.0));
