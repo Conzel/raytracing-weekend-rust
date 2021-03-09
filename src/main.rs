@@ -2,25 +2,44 @@
 extern crate impl_ops;
 use indicatif::ProgressBar;
 mod vec3;
+mod ray;
 
-const IMAGE_WIDTH: u32 = 256;
-const IMAGE_HEIGHT: u32 = 256;
+const ASPECT_RATIO: f64 = 16.0 / 9.0;
+const IMAGE_WIDTH: u32 = 400;
+const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
+
+const VIEWPORT_HEIGHT: f64 = 2.0;
+const VIEWPORT_WIDTH: f64 = ASPECT_RATIO * VIEWPORT_HEIGHT;
+const FOCAL_LENGTH: f64 = 1.0;
+
+const ORIGIN: vec3::Loc = vec3::Vec3::new(0.0,0.0,0.0);
+const HORIZ: vec3::Loc = vec3::Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
+const VERT: vec3::Loc = vec3::Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
+const LOWER_LEFT: vec3::Loc = vec3::Vec3::new(-VIEWPORT_HEIGHT, -VIEWPORT_WIDTH, -FOCAL_LENGTH);
+
+fn ray_to_color(r: &ray::Ray) -> vec3::Color {
+    use vec3::*;
+    let dir = r.unit_direction();
+    let t = 0.5 * (dir.e1 + 1.0);
+    (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5,0.7,1.0)
+}
 
 fn main() {
-    let bar = ProgressBar::new((IMAGE_WIDTH * IMAGE_HEIGHT).into());
+    use vec3::*;
+    use ray::*;
+
+    let bar = ProgressBar::new((IMAGE_WIDTH).into());
     println!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
     for row in 0..IMAGE_WIDTH {
+        bar.inc(1);
         for col in 0..IMAGE_HEIGHT {
-            bar.inc(1);
-            let r = (row as f64) / ((IMAGE_WIDTH - 1) as f64);
-            let g = (col as f64) / ((IMAGE_HEIGHT - 1) as f64);
-            let b = 0.25 as f64;
+            let u = (row as f64) / ((IMAGE_WIDTH - 1) as f64);
+            let v = (col as f64) / ((IMAGE_HEIGHT - 1) as f64);
+            let r = Ray::new(ORIGIN, &HORIZ * u + &VERT * v + LOWER_LEFT - ORIGIN);
 
-            let ir = (r * 255.0).round();
-            let ig = (g * 255.0).round();
-            let ib = (b * 255.0).round();
+            let c: Color = ray_to_color(&r);
 
-            println!("{} {} {}", ir, ig, ib);
+            println!("{}", color_string(&c));
         }
     }
     bar.finish();
