@@ -3,7 +3,8 @@ extern crate impl_ops;
 use indicatif::ProgressBar;
 mod vec3;
 mod ray;
-mod objects;
+mod sphere;
+mod hittable;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
@@ -19,7 +20,8 @@ const VERT: vec3::Loc = vec3::Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
 
 fn ray_to_color(r: &ray::Ray) -> vec3::Color {
     use vec3::*;
-    use objects::*;
+    use sphere::*;
+    use hittable::Hittable;
 
     let center = Vec3::new(0.0, 0.0, -1.0);
     let radius = 0.5;
