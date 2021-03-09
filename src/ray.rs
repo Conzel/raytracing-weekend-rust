@@ -1,5 +1,6 @@
 use crate::vec3::*;
 
+#[derive(Debug)]
 pub struct Ray {
     pub orig: Loc,
     pub dir: Loc
@@ -21,7 +22,7 @@ impl Ray {
     }
 }
 
-#[cfg(tests)]
+#[cfg(test)]
 mod tests {
     use super::*;
     const RAY: Ray = Ray::new(Vec3::new(1.0,0.0,-1.0), Vec3::new(-1.0,0.0,1.0));

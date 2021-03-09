@@ -3,6 +3,7 @@ extern crate impl_ops;
 use indicatif::ProgressBar;
 mod vec3;
 mod ray;
+mod objects;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
@@ -18,6 +19,16 @@ const VERT: vec3::Loc = vec3::Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
 
 fn ray_to_color(r: &ray::Ray) -> vec3::Color {
     use vec3::*;
+    use objects::*;
+
+    let center = Vec3::new(0.0, 0.0, -1.0);
+    let radius = 0.5;
+    let sphere = Sphere::new(center,radius);
+    if let Some(hit) = sphere.hit(r, &interval_validator(Some(0.0), None)) {
+        let n = hit.normal;
+        return 0.5 * (n + Vec3::new(1.0,1.0,1.0));
+    }
+
     let dir = r.unit_direction();
     let t = 0.5 * (dir.e1 + 1.0);
     assert!(t >= 0.0 && t <= 1.0);
