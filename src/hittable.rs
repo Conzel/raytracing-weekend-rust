@@ -13,7 +13,7 @@ pub struct Hit {
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, validate_t: &impl Fn(f64) -> bool) -> Option<Hit>;
+    fn hit(&self, ray: &Ray, validate_t: &dyn Fn(f64) -> bool) -> Option<Hit>;
 }
 
 impl Hit {

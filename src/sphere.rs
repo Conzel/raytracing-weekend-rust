@@ -46,7 +46,7 @@ fn solve_pq(p: f64, q: f64) -> Option<(f64, f64)> {
     Some((-p/2.0 - root, -p/2.0 + root))
 }
 
-fn first_acceptable<T: Clone>(vec: Vec<T>, validate: &impl Fn(T) -> bool) -> Option<T> {
+fn first_acceptable<T: Clone>(vec: Vec<T>, validate: &dyn Fn(T) -> bool) -> Option<T> {
     for el in vec {
         if validate(el.clone()) {
             return Some(el);
@@ -57,7 +57,7 @@ fn first_acceptable<T: Clone>(vec: Vec<T>, validate: &impl Fn(T) -> bool) -> Opt
 
 impl Hittable for Sphere {
     #[allow(non_snake_case)]
-    fn hit(&self, ray: &Ray, validate_t: &impl Fn(f64) -> bool) -> Option<Hit> {
+    fn hit(&self, ray: &Ray, validate_t: &dyn Fn(f64) -> bool) -> Option<Hit> {
         // Equation: 
         // Ray is described via A + t*b (A origin, b direction), for t in (-oo, oo)
         // Sphere is described via C (center) and r (radius).

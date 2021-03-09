@@ -5,6 +5,7 @@ mod vec3;
 mod ray;
 mod sphere;
 mod hittable;
+mod hittable_list;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
@@ -18,15 +19,12 @@ const ORIGIN: vec3::Loc = vec3::Vec3::new(0.0,0.0,0.0);
 const HORIZ: vec3::Loc = vec3::Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
 const VERT: vec3::Loc = vec3::Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
 
-fn ray_to_color(r: &ray::Ray) -> vec3::Color {
+fn ray_to_color(r: &ray::Ray, world: &hittable_list::HittableList) -> vec3::Color {
     use vec3::*;
     use sphere::*;
     use hittable::Hittable;
 
-    let center = Vec3::new(0.0, 0.0, -1.0);
-    let radius = 0.5;
-    let sphere = Sphere::new(center,radius);
-    if let Some(hit) = sphere.hit(r, &interval_validator(Some(0.0), None)) {
+    if let Some(hit) = world.hit(r, &interval_validator(Some(0.0), None)) {
         let n = hit.normal;
         return 0.5 * (n + Vec3::new(1.0,1.0,1.0));
     }
@@ -40,19 +38,26 @@ fn ray_to_color(r: &ray::Ray) -> vec3::Color {
 fn main() {
     use vec3::*;
     use ray::*;
+    use sphere::*;
 
+    // Image 
     let lower_left: vec3::Loc = ORIGIN - HORIZ / 2.0 - VERT / 2.0 - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
+
+    // World
+    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
+    let background = Sphere::new(Vec3::new(0.0,-100.5,-1.0), 100.0);
+    let world = hittable_list::HittableList::new(vec![&sphere, &background]);
 
     let bar = ProgressBar::new((IMAGE_HEIGHT).into());
     println!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
-    for col in 0..IMAGE_HEIGHT {
+    for col in (0..IMAGE_HEIGHT).rev() {
         bar.inc(1);
         for row in 0..IMAGE_WIDTH {
             let u = (row as f64) / ((IMAGE_WIDTH - 1) as f64);
             let v = (col as f64) / ((IMAGE_HEIGHT - 1) as f64);
             let r = Ray::new(ORIGIN, &HORIZ * u + &VERT * v + &lower_left - ORIGIN);
 
-            let c: Color = ray_to_color(&r);
+            let c: Color = ray_to_color(&r, &world);
 
             println!("{}", color_string(&c));
         }
