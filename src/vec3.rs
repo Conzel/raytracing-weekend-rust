@@ -58,6 +58,11 @@ impl Vec3 {
     pub fn zero() -> Vec3 {
         Vec3::new(0.0, 0.0, 0.0)
     }
+
+    pub fn is_near_zero(&self) -> bool {
+        let tol = 1e-8;
+        self.e0.abs() < tol && self.e1.abs() < tol && self.e2.abs() < tol
+    }
 }
 
 pub fn color_string(c: &Color) -> String {

@@ -36,14 +36,16 @@ fn ray_to_color(
     }
 
     if let Some(hit) = world.hit(r, &interval_validator(Some(SHADOW_ACNE_TOLERANCE), None)) {
-        let next_ray_target = &hit.location + &hit.normal + Vec3::random_unit_vector(rng);
-        return REFLECTIVITY
-            * ray_to_color(
-                &Ray::new(hit.location, next_ray_target),
+        if let Some(scatter_result) = hit.material.scatter(r, &hit) {
+            return scatter_result.attenuation.hadamard(&ray_to_color(
+                &scatter_result.ray,
                 world,
                 recursion_depth - 1,
                 rng,
-            );
+            ));
+        } else {
+            return Vec3::zero();
+        }
     }
 
     let dir = r.unit_direction();
@@ -63,11 +65,16 @@ fn main() {
     let camera = Camera::create_simple();
 
     // World
-    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Box::new(Lambertian::new()));
+    let albedo = Vec3::new(0.7, 0.7, 0.7);
+    let sphere = Sphere::new(
+        Vec3::new(0.0, 0.0, -1.0),
+        0.5,
+        Box::new(Lambertian::new(albedo.clone())),
+    );
     let background = Sphere::new(
         Vec3::new(0.0, -100.5, -1.0),
         100.0,
-        Box::new(Lambertian::new()),
+        Box::new(Lambertian::new(albedo.clone())),
     );
     let world = hittable_list::HittableList::new(vec![&sphere, &background]);
 
