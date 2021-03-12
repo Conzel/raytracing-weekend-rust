@@ -4,7 +4,7 @@ pub type Loc = Vec3;
 use std::ops;
 use std::ops::Neg;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
     pub e0: f64,
     pub e1: f64,

@@ -6,6 +6,7 @@ mod ray;
 mod sphere;
 mod hittable;
 mod hittable_list;
+mod camera;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
