@@ -12,14 +12,6 @@ const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
 const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
 
-const VIEWPORT_HEIGHT: f64 = 2.0;
-const VIEWPORT_WIDTH: f64 = ASPECT_RATIO * VIEWPORT_HEIGHT;
-const FOCAL_LENGTH: f64 = 1.0;
-
-const ORIGIN: vec3::Loc = vec3::Vec3::new(0.0,0.0,0.0);
-const HORIZ: vec3::Loc = vec3::Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
-const VERT: vec3::Loc = vec3::Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
-
 fn ray_to_color(r: &ray::Ray, world: &hittable_list::HittableList) -> vec3::Color {
     use vec3::*;
     use sphere::*;
@@ -40,9 +32,10 @@ fn main() {
     use vec3::*;
     use ray::*;
     use sphere::*;
+    use camera::*;
 
-    // Image 
-    let lower_left: vec3::Loc = ORIGIN - HORIZ / 2.0 - VERT / 2.0 - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
+    // Camera
+    let camera = Camera::create_simple();
 
     // World
     let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
@@ -56,7 +49,7 @@ fn main() {
         for row in 0..IMAGE_WIDTH {
             let u = (row as f64) / ((IMAGE_WIDTH - 1) as f64);
             let v = (col as f64) / ((IMAGE_HEIGHT - 1) as f64);
-            let r = Ray::new(ORIGIN, &HORIZ * u + &VERT * v + &lower_left - ORIGIN);
+            let r = camera.get_ray(u, v);
 
             let c: Color = ray_to_color(&r, &world);
 
