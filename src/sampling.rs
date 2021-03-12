@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::mem;
 use crate::vec3::*;
 
@@ -10,7 +11,7 @@ impl ColorSampler {
     pub fn new() -> ColorSampler {
         ColorSampler {
             sample_num: 0,
-            acc: Vec3::new(0.0,0.0,0.0)
+            acc: Vec3::zero()
         }
     }
 
@@ -20,10 +21,40 @@ impl ColorSampler {
     }
 
     pub fn get_and_reset(&mut self) -> Color {
-        let mut res = Vec3::new(0.0,0.0,0.0);
+        let mut res = Vec3::zero();
         mem::swap(&mut self.acc, &mut res);
         res = res / (self.sample_num as f64);
         self.sample_num = 0;
         res
+    }
+}
+
+impl Vec3 {
+    pub fn random_in_unit_cube(rng: &mut impl Rng) -> Vec3 {
+        let mut rand_coord = || (rng.gen::<f64>() - 1.0/2.0) * 2.0;
+        Vec3::new(rand_coord(), rand_coord(), rand_coord())
+    }
+
+    // Via rejection sampling
+    pub fn random_in_unit_sphere(rng: &mut impl Rng) -> Vec3 {
+        let mut candidate = Vec3::random_in_unit_cube(rng);
+        while candidate.length_squared() >= 1.0 {
+            candidate = Vec3::random_in_unit_cube(rng);
+        }
+        candidate
+    }
+
+    pub fn random_unit_vector(rng: &mut impl Rng) -> Vec3 {
+        Vec3::random_in_unit_sphere(rng).unit_vector()
+    }
+
+    pub fn random_in_hemisphere(normal: Vec3, rng: &mut impl Rng) -> Vec3 {
+        let in_unit_sphere = Vec3::random_in_unit_sphere(rng);
+        if in_unit_sphere.dot(&normal) > 0.0 {
+            in_unit_sphere
+        }
+        else {
+            -in_unit_sphere
+        }
     }
 }

@@ -45,6 +45,15 @@ impl Vec3 {
         self.e1 += rhs.e1;
         self.e2 += rhs.e2;
     }
+
+    pub fn gamma_correct(&self, gamma: f64) -> Vec3 {
+        let one_over_gamma = 1.0/gamma;
+        Vec3::new(self.e0.powf(one_over_gamma), self.e1.powf(one_over_gamma), self.e2.powf(one_over_gamma))
+    }
+
+    pub fn zero() -> Vec3 {
+        Vec3::new(0.0,0.0,0.0)
+    }
 }
 
 pub fn color_string(c: &Color) -> String {
