@@ -1,18 +1,21 @@
 use crate::hittable::*;
 use crate::ray::*;
 use crate::vec3::*;
+use crate::materials::*;
 
 #[derive(Debug)]
 pub struct Sphere {
     pub center: Loc,
     pub radius: f64,
+    pub material: Box<dyn Material>
 }
 
 impl Sphere {
-    pub const fn new(center: Loc, radius: f64) -> Sphere {
+    pub fn new(center: Loc, radius: f64, material: Box<dyn Material>) -> Sphere {
         Sphere {
             center: center,
             radius: radius,
+            material: material
         }
     }
 }
@@ -81,7 +84,7 @@ impl Hittable for Sphere {
 
         let hit_location = ray.at(t);
         let outward_normal = (&hit_location - &self.center).unit_vector();
-        Some(Hit::from_ray(hit_location, outward_normal, t, ray))
+        Some(Hit::from_ray(hit_location, outward_normal, t, ray, &*self.material))
     }
 }
 

@@ -9,6 +9,7 @@ mod ray;
 mod sphere;
 mod vec3;
 mod sampling;
+mod materials;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
@@ -45,13 +46,14 @@ fn main() {
     use sphere::*;
     use vec3::*;
     use sampling::ColorSampler;
+    use materials::Lambertian;
 
     // Camera
     let camera = Camera::create_simple();
 
     // World
-    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
-    let background = Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0);
+    let sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Box::new(Lambertian::new()));
+    let background = Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, Box::new(Lambertian::new()));
     let world = hittable_list::HittableList::new(vec![&sphere, &background]);
 
     // Anti-Aliasing
