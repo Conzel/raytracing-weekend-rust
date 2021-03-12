@@ -1,6 +1,6 @@
+use crate::materials::Material;
 use crate::ray::*;
 use crate::vec3::*;
-use crate::materials::Material;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Surface {
@@ -22,7 +22,13 @@ pub trait Hittable {
 }
 
 impl<'a> Hit<'a> {
-    pub fn new(location: Loc, normal: Loc, t: f64, material: &'a dyn Material, surface: Surface) -> Hit<'a> {
+    pub fn new(
+        location: Loc,
+        normal: Loc,
+        t: f64,
+        material: &'a dyn Material,
+        surface: Surface,
+    ) -> Hit<'a> {
         assert!((normal.length() - 1.0).abs() <= 0.0001);
         Hit {
             location: location,
@@ -33,7 +39,13 @@ impl<'a> Hit<'a> {
         }
     }
 
-    pub fn from_ray(location: Loc, outward_normal: Loc, t: f64, ray: &Ray, material: &'a dyn Material) -> Hit<'a> {
+    pub fn from_ray(
+        location: Loc,
+        outward_normal: Loc,
+        t: f64,
+        ray: &Ray,
+        material: &'a dyn Material,
+    ) -> Hit<'a> {
         if ray.dir.dot(&outward_normal) > 0.0 {
             assert!(ray.dir.dot(&-&(outward_normal)) < 0.0);
             Hit::new(location, -outward_normal, t, material, Surface::Inside)

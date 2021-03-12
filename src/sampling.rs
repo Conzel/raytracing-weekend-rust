@@ -1,17 +1,17 @@
+use crate::vec3::*;
 use rand::Rng;
 use std::mem;
-use crate::vec3::*;
 
 pub struct ColorSampler {
     sample_num: i32,
-    acc: Color 
+    acc: Color,
 }
 
 impl ColorSampler {
     pub fn new() -> ColorSampler {
         ColorSampler {
             sample_num: 0,
-            acc: Vec3::zero()
+            acc: Vec3::zero(),
         }
     }
 
@@ -31,7 +31,7 @@ impl ColorSampler {
 
 impl Vec3 {
     pub fn random_in_unit_cube(rng: &mut impl Rng) -> Vec3 {
-        let mut rand_coord = || (rng.gen::<f64>() - 1.0/2.0) * 2.0;
+        let mut rand_coord = || (rng.gen::<f64>() - 1.0 / 2.0) * 2.0;
         Vec3::new(rand_coord(), rand_coord(), rand_coord())
     }
 
@@ -52,8 +52,7 @@ impl Vec3 {
         let in_unit_sphere = Vec3::random_in_unit_sphere(rng);
         if in_unit_sphere.dot(&normal) > 0.0 {
             in_unit_sphere
-        }
-        else {
+        } else {
             -in_unit_sphere
         }
     }

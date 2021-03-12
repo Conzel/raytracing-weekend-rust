@@ -1,14 +1,13 @@
 use std::fmt;
 
-pub trait Material: fmt::Debug {
-}
+pub trait Material: fmt::Debug {}
 
 #[derive(Debug)]
 pub struct Lambertian {}
 
 impl Lambertian {
     pub fn new() -> Lambertian {
-    Lambertian{}
+        Lambertian {}
     }
 }
 
