@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate impl_ops;
 use indicatif::ProgressBar;
-use std::mem;
 use rand::Rng;
 mod camera;
 mod hittable;
@@ -9,6 +8,7 @@ mod hittable_list;
 mod ray;
 mod sphere;
 mod vec3;
+mod sampling;
 
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
@@ -30,52 +30,11 @@ fn ray_to_color(r: &ray::Ray, world: &hittable_list::HittableList) -> vec3::Colo
     (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.2, 0.4, 1.0)
 }
 
-// We must get both u and v at the same time, as we work with RNG, who can only be borrowed
-// mutably.
-fn sample(
-    num_samples: i32,
-    rand_uv: &mut impl FnMut() -> (f64, f64), 
-    color_at: &impl Fn(f64, f64) -> vec3::Color,
-) -> vec3::Color {
-    let mut pixel_color = vec3::Vec3::new(0.0,0.0,0.0);
-    for _ in 0..num_samples {
-        let (u,v) = rand_uv();
-        pixel_color.add_cum(&color_at(u,v));
-    }
-    pixel_color / (num_samples as f64)
-}
-
-pub struct ColorSampler {
-    sample_num: i32,
-    acc: vec3::Color 
-}
-
-impl ColorSampler {
-    pub fn new() -> ColorSampler {
-        ColorSampler {
-            sample_num: 0,
-            acc: vec3::Vec3::new(0.0,0.0,0.0)
-        }
-    }
-
-    pub fn add(&mut self, c: &vec3::Color) {
-        self.sample_num += 1;
-        self.acc.add_cum(c);
-    }
-
-    pub fn get_and_reset(&mut self) -> vec3::Color {
-        let mut res = vec3::Vec3::new(0.0,0.0,0.0);
-        mem::swap(&mut self.acc, &mut res);
-        res = res / (self.sample_num as f64);
-        self.sample_num = 0;
-        res
-    }
-}
-
 fn main() {
     use camera::*;
     use sphere::*;
     use vec3::*;
+    use sampling::ColorSampler;
 
     // Camera
     let camera = Camera::create_simple();
