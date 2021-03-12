@@ -39,6 +39,12 @@ impl Vec3 {
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
     }
+
+    pub fn add_cum(&mut self, rhs: &Self) {
+        self.e0 += rhs.e0;
+        self.e1 += rhs.e1;
+        self.e2 += rhs.e2;
+    }
 }
 
 pub fn color_string(c: &Color) -> String {
@@ -70,7 +76,7 @@ impl_op_ex!(-|a: &Vec3, b: &Vec3| -> Vec3 { a + (-1.0 * b) });
 impl Neg for Vec3 {
     type Output = Vec3;
     fn neg(self) -> Vec3 {
-        self * (-1.0) 
+        self * (-1.0)
     }
 }
 
@@ -84,12 +90,12 @@ impl Neg for &Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    const TEST_VEC_1: Vec3 = Vec3::new(1.0,2.0,3.0);
-    const TEST_VEC_2: Vec3 = Vec3::new(-1.0,0.0,1.0);
+    const TEST_VEC_1: Vec3 = Vec3::new(1.0, 2.0, 3.0);
+    const TEST_VEC_2: Vec3 = Vec3::new(-1.0, 0.0, 1.0);
 
     #[test]
     fn test_add_vectors() {
-        let res = Vec3::new(0.0,2.0,4.0);
+        let res = Vec3::new(0.0, 2.0, 4.0);
         assert_eq!(TEST_VEC_1 + TEST_VEC_2, res);
         assert_eq!(TEST_VEC_2 + TEST_VEC_1, res);
     }
@@ -101,7 +107,7 @@ mod tests {
 
     #[test]
     fn test_mul_scalar() {
-        let res = Vec3::new(2.0,4.0,6.0);
+        let res = Vec3::new(2.0, 4.0, 6.0);
         assert_eq!(TEST_VEC_1 * 2.0, res);
         assert_eq!(2.0 * TEST_VEC_1, res);
     }
@@ -119,8 +125,11 @@ mod tests {
 
     #[test]
     fn test_unit_vector_creation() {
-        let sqrt_one_half = 1.0/(2.0 as f64).sqrt();
-        assert_eq!(TEST_VEC_2.unit_vector(), Vec3::new(-sqrt_one_half, 0.0, sqrt_one_half));
+        let sqrt_one_half = 1.0 / (2.0 as f64).sqrt();
+        assert_eq!(
+            TEST_VEC_2.unit_vector(),
+            Vec3::new(-sqrt_one_half, 0.0, sqrt_one_half)
+        );
     }
 
     #[test]
@@ -137,6 +146,6 @@ mod tests {
 
     #[test]
     fn test_color_string() {
-        assert_eq!("255 255 255", color_string(&Vec3::new(1.0,1.0,1.0)));
+        assert_eq!("255 255 255", color_string(&Vec3::new(1.0, 1.0, 1.0)));
     }
 }

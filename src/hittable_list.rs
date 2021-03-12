@@ -2,14 +2,12 @@ use crate::hittable::*;
 use crate::ray::*;
 
 pub struct HittableList<'a> {
-    objects: Vec<&'a dyn Hittable>
+    objects: Vec<&'a dyn Hittable>,
 }
 
 impl<'a> HittableList<'a> {
     pub fn new(vec: Vec<&'a dyn Hittable>) -> HittableList<'a> {
-        HittableList {
-            objects: vec
-        }
+        HittableList { objects: vec }
     }
 
     pub fn add(&mut self, obj: &'a impl Hittable) {
@@ -28,9 +26,11 @@ impl<'a> Hittable for HittableList<'a> {
         for hittable in &self.objects {
             if let Some(hit) = hittable.hit(ray, validate_t) {
                 match closest_hit_opt {
-                    Some(closest_hit) if closest_hit.t.abs() > hit.t.abs() => closest_hit_opt = Some(hit),
+                    Some(closest_hit) if closest_hit.t.abs() > hit.t.abs() => {
+                        closest_hit_opt = Some(hit)
+                    }
                     None => closest_hit_opt = Some(hit),
-                    _ => ()
+                    _ => (),
                 };
             }
         }
