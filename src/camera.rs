@@ -1,6 +1,6 @@
 use crate::ray::*;
-use crate::vec3::*;
 use crate::sampling::*;
+use crate::vec3::*;
 use rand::thread_rng;
 use rand::Rng;
 
@@ -18,8 +18,14 @@ pub struct Camera {
 type Degree = f64;
 
 impl Camera {
-    pub fn new(lookfrom: Loc, lookat: Loc, vup: Loc, vfov: Degree, aspect_ratio: f64, 
-               aperture: f64) -> Camera {
+    pub fn new(
+        lookfrom: Loc,
+        lookat: Loc,
+        vup: Loc,
+        vfov: Degree,
+        aspect_ratio: f64,
+        aperture: f64,
+    ) -> Camera {
         let theta = vfov.to_radians();
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
