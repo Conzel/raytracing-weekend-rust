@@ -24,6 +24,12 @@ impl Lambertian {
     }
 }
 
+impl Metal {
+    pub fn new(albedo: Color) -> Metal {
+        Metal { albedo: albedo }
+    }
+}
+
 pub struct ScatterResult {
     pub attenuation: Color,
     pub ray: Ray,
