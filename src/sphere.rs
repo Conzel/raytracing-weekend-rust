@@ -140,9 +140,14 @@ mod tests {
 
     #[test]
     fn sphere_hits() {
+        let simple_material = Lambertian::new(Vec3::zero());
         // Sphere hit from inside
         let validator = interval_validator(Some(0.0), None);
-        let sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0);
+        let sphere = Sphere::new(
+            Vec3::new(0.0, 0.0, 0.0),
+            1.0,
+            Box::new(simple_material.clone()),
+        );
         let ray1 = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(1.0, 0.0, 0.0));
         let hit1 = sphere
             .hit(&ray1, &validator)
@@ -153,7 +158,11 @@ mod tests {
         assert_eq!(hit1.surface, Surface::Inside);
 
         // Sphere hit from outside
-        let sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0);
+        let sphere = Sphere::new(
+            Vec3::new(0.0, 0.0, 0.0),
+            1.0,
+            Box::new(simple_material.clone()),
+        );
         let ray2 = Ray::new(Vec3::new(0.0, 3.0, 0.0), Vec3::new(0.0, -1.0, 0.0));
         let hit2 = sphere
             .hit(&ray2, &validator)

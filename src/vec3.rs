@@ -63,6 +63,14 @@ impl Vec3 {
         let tol = 1e-8;
         self.e0.abs() < tol && self.e1.abs() < tol && self.e2.abs() < tol
     }
+
+    pub fn cross(&self, rhs: &Vec3) -> Vec3 {
+        Vec3::new(
+            self.e1 * rhs.e2 - self.e2 * rhs.e1,
+            self.e2 * rhs.e0 - self.e0 * rhs.e2,
+            self.e0 * rhs.e1 - self.e1 * rhs.e0,
+        )
+    }
 }
 
 pub fn color_string(c: &Color) -> String {
@@ -165,5 +173,21 @@ mod tests {
     #[test]
     fn test_color_string() {
         assert_eq!("255 255 255", color_string(&Vec3::new(1.0, 1.0, 1.0)));
+    }
+
+    #[test]
+    fn test_cross() {
+        assert_eq!(
+            Vec3::new(1.0, 0.0, 0.0).cross(&Vec3::new(0.0, 1.0, 0.0)),
+            Vec3::new(0.0, 0.0, 1.0)
+        );
+        assert_eq!(
+            Vec3::new(0.0, 1.0, 0.0).cross(&Vec3::new(0.0, 0.0, 1.0)),
+            Vec3::new(1.0, 0.0, 0.0)
+        );
+        assert_eq!(
+            Vec3::new(0.0, 1.0, 0.0).cross(&Vec3::new(1.0, 0.0, 0.0)),
+            Vec3::new(0.0, 0.0, -1.0)
+        );
     }
 }

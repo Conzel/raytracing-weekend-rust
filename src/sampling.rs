@@ -29,10 +29,14 @@ impl ColorSampler {
     }
 }
 
+// Returns random float in [-1,1]
+fn rand_coord(rng: &mut impl Rng) -> f64 {
+    (rng.gen::<f64>() - 1.0 / 2.0) * 2.0
+}
+
 impl Vec3 {
     pub fn random_in_unit_cube(rng: &mut impl Rng) -> Vec3 {
-        let mut rand_coord = || (rng.gen::<f64>() - 1.0 / 2.0) * 2.0;
-        Vec3::new(rand_coord(), rand_coord(), rand_coord())
+        Vec3::new(rand_coord(rng), rand_coord(rng), rand_coord(rng))
     }
 
     // Via rejection sampling
@@ -55,5 +59,14 @@ impl Vec3 {
         } else {
             -in_unit_sphere
         }
+    }
+
+    // Returns random vector in disk with 0 depth z
+    pub fn random_in_unit_disk(rng: &mut impl Rng) -> Vec3 {
+        let mut candidate = Vec3::new(rand_coord(rng), rand_coord(rng), 0.0);
+        while candidate.length_squared() >= 1.0 {
+            candidate = Vec3::random_in_unit_cube(rng);
+        }
+        candidate
     }
 }
