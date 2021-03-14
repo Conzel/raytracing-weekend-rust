@@ -20,6 +20,7 @@ const NUM_SAMPLES: i32 = 20;
 const GAMMA_CORRECTION: f64 = 2.0;
 const SHADOW_ACNE_TOLERANCE: f64 = 0.0001;
 const REFLECTIVITY: f64 = 0.5;
+const APERTURE: f64 = 2.0;
 
 fn ray_to_color(
     r: &ray::Ray,
@@ -70,11 +71,12 @@ fn main() {
 
     // Camera
     let camera = Camera::new(
-        Vec3::new(-2.0, 2.0, 1.0),
+        Vec3::new(3.0, 3.0, 1.0),
         Vec3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
-        200.0,
+        20.0,
         16.0 / 9.0,
+        APERTURE,
     );
 
     // World
