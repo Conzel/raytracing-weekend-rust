@@ -25,12 +25,12 @@ impl Camera {
         vfov: Degree,
         aspect_ratio: f64,
         aperture: f64,
+        focus_dist: f64
     ) -> Camera {
         let theta = vfov.to_radians();
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
-        let focus_dist = (&lookfrom - &lookat).length();
 
         let w = (&lookfrom - &lookat).unit_vector();
         let u = vup.cross(&w).unit_vector();

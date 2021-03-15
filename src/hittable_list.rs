@@ -2,16 +2,20 @@ use crate::hittable::*;
 use crate::ray::*;
 
 pub struct HittableList<'a> {
-    objects: Vec<&'a dyn Hittable>,
+    objects: Vec<Box<dyn Hittable + 'a>>,
 }
 
 impl<'a> HittableList<'a> {
-    pub fn new(vec: Vec<&'a dyn Hittable>) -> HittableList<'a> {
+    pub fn new(vec: Vec<Box<dyn Hittable + 'a>>) -> HittableList<'a> {
         HittableList { objects: vec }
     }
 
-    pub fn add(&mut self, obj: &'a impl Hittable) {
-        self.objects.push(obj);
+    pub fn empty() -> HittableList<'a> {
+        HittableList { objects: vec![] }
+    }
+
+    pub fn add<T: Hittable + 'a>(&mut self, obj: T) {
+        self.objects.push(Box::new(obj));
     }
 
     pub fn clear(&mut self) {

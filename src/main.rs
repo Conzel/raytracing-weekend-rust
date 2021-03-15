@@ -10,17 +10,16 @@ mod ray;
 mod sampling;
 mod sphere;
 mod vec3;
-use std::f64::consts;
 
-const ASPECT_RATIO: f64 = 16.0 / 9.0;
-const IMAGE_WIDTH: u32 = 400;
+const ASPECT_RATIO: f64 = 3.0 / 2.0;
+const IMAGE_WIDTH: u32 = 1200;
 const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-const MAX_REC_DEPTH: i32 = 10;
-const NUM_SAMPLES: i32 = 20;
+const MAX_REC_DEPTH: i32 = 50;
+const NUM_SAMPLES: i32 = 500;
 const GAMMA_CORRECTION: f64 = 2.0;
 const SHADOW_ACNE_TOLERANCE: f64 = 0.0001;
-const REFLECTIVITY: f64 = 0.5;
-const APERTURE: f64 = 2.0;
+const APERTURE: f64 = 0.1;
+const FOCUS_DIST: f64 = 10.0;
 
 fn ray_to_color(
     r: &ray::Ray,
@@ -29,7 +28,6 @@ fn ray_to_color(
     rng: &mut impl Rng,
 ) -> vec3::Color {
     use hittable::Hittable;
-    use ray::*;
     use sphere::*;
     use vec3::*;
 
@@ -62,43 +60,73 @@ fn ray_to_color(
     (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.2, 0.4, 1.0)
 }
 
+fn gen_random_scene() -> hittable_list::HittableList<'static> {
+    use hittable_list::*;
+    use materials::*;
+    use vec3::*;
+    use sphere::*;
+
+    let mut rng = rand::thread_rng();
+    let mut world = HittableList::empty();
+
+    let ground_material = Lambertian::new(Vec3::new(0.5,0.5,0.5));
+    let ground_sphere = Sphere::new(Vec3::new(0.0,-1000.0,0.0), 1000.0, Box::new(ground_material));
+
+    world.add(ground_sphere);
+    for a in -11..11 {
+        for b in -11..11 {
+            let material_num: f64 = rng.gen();
+            let center = Vec3::new(a as f64 + 0.9 * rng.gen::<f64>(), 0.2, 
+                                   b as f64 + 0.9 * rng.gen::<f64>());
+
+            if (&center - Vec3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                let material: Box<dyn Material> = if material_num < 0.8 {
+                    // diffuse
+                    let albedo = Vec3::random_range(0.0, 1.0, &mut rng)
+                        .hadamard(&Vec3::random_range(0.0, 1.0, &mut rng));
+                    Box::new(Lambertian::new(albedo))
+                }
+                else if material_num < 0.95 {
+                    // metal
+                    let albedo = Vec3::random_range(0.5, 1.0, &mut rng);
+                    let fuzz = rng.gen_range(0.0..0.5);
+                    Box::new(Metal::new(albedo, fuzz))
+                }
+                else {
+                    // glass
+                    Box::new(Dielectric::new(1.5))
+                };
+                world.add(Sphere::new(center, 0.2, material));
+            }
+        }
+    }
+    let material_dielec = Dielectric::new(1.5);
+    world.add(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 1.0, Box::new(material_dielec)));
+    let material_lamb = Lambertian::new(Vec3::new(0.4, 0.2, 0.1));
+    world.add(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, Box::new(material_lamb)));
+    let material_metal = Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0);
+    world.add(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, Box::new(material_metal)));
+    world
+}
+
 fn main() {
     use camera::*;
-    use materials::*;
     use sampling::ColorSampler;
-    use sphere::*;
     use vec3::*;
 
     // Camera
     let camera = Camera::new(
-        Vec3::new(3.0, 3.0, 1.0),
-        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(13.0, 2.0, 3.0),
+        Vec3::new(0.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
         20.0,
-        16.0 / 9.0,
+        ASPECT_RATIO,
         APERTURE,
+        FOCUS_DIST
     );
 
     // World
-    let material_ground = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
-    let material_center = Lambertian::new(Vec3::new(0.7, 0.3, 0.3));
-    let material_left = Dielectric::new(1.5);
-    let material_right = Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.2);
-
-    let sphere_center = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Box::new(material_center));
-    let background = Sphere::new(
-        Vec3::new(0.0, -100.5, -1.0),
-        90.0,
-        Box::new(material_ground),
-    );
-    let sphere_right = Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, Box::new(material_right));
-    let sphere_left = Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, Box::new(material_left));
-    let world = hittable_list::HittableList::new(vec![
-        &sphere_center,
-        &background,
-        &sphere_left,
-        &sphere_right,
-    ]);
+    let world = gen_random_scene();
 
     // Anti-Aliasing
     let mut rng = rand::thread_rng();
