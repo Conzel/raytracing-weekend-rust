@@ -20,10 +20,6 @@ impl Sphere {
     }
 }
 
-pub fn trivial_validator() -> impl Fn(f64) -> bool {
-    |_| true
-}
-
 pub fn interval_validator(a_opt: Option<f64>, b_opt: Option<f64>) -> impl Fn(f64) -> bool {
     move |t| {
         let a_ok = match a_opt {

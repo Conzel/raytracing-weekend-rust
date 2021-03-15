@@ -1,8 +1,6 @@
 use crate::ray::*;
-use crate::sampling::*;
 use crate::vec3::*;
 use rand::thread_rng;
-use rand::Rng;
 
 pub struct Camera {
     origin: Loc,
@@ -12,6 +10,7 @@ pub struct Camera {
     lens_radius: f64,
     u: Loc,
     v: Loc,
+    #[allow(dead_code)]
     w: Loc,
 }
 

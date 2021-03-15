@@ -1,6 +1,5 @@
 use crate::hittable::*;
 use crate::ray::*;
-use crate::sampling::*;
 use crate::vec3::*;
 use rand::thread_rng;
 use rand::Rng;

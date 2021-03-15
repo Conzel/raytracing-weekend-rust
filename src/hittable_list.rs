@@ -6,6 +6,7 @@ pub struct HittableList<'a> {
 }
 
 impl<'a> HittableList<'a> {
+    #[allow(dead_code)]
     pub fn new(vec: Vec<Box<dyn Hittable + Send + Sync + 'a>>) -> HittableList<'a> {
         HittableList { objects: vec }
     }
@@ -18,6 +19,7 @@ impl<'a> HittableList<'a> {
         self.objects.push(Box::new(obj));
     }
 
+    #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.objects.clear();
     }
