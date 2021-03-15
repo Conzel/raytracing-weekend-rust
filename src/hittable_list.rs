@@ -5,6 +5,9 @@ pub struct HittableList<'a> {
     objects: Vec<Box<dyn Hittable + 'a>>,
 }
 
+unsafe impl<'a> Send for HittableList<'a> {}
+unsafe impl<'a> Sync for HittableList<'a> {}
+
 impl<'a> HittableList<'a> {
     pub fn new(vec: Vec<Box<dyn Hittable + 'a>>) -> HittableList<'a> {
         HittableList { objects: vec }
