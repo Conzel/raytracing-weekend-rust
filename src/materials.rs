@@ -6,7 +6,7 @@ use rand::thread_rng;
 use rand::Rng;
 use std::fmt;
 
-pub trait Material: fmt::Debug {
+pub trait Material: fmt::Debug + Send + Sync {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<ScatterResult>;
 }
 

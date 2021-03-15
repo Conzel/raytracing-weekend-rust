@@ -2,14 +2,11 @@ use crate::hittable::*;
 use crate::ray::*;
 
 pub struct HittableList<'a> {
-    objects: Vec<Box<dyn Hittable + 'a>>,
+    objects: Vec<Box<dyn Hittable + Send + Sync + 'a>>,
 }
 
-unsafe impl<'a> Send for HittableList<'a> {}
-unsafe impl<'a> Sync for HittableList<'a> {}
-
 impl<'a> HittableList<'a> {
-    pub fn new(vec: Vec<Box<dyn Hittable + 'a>>) -> HittableList<'a> {
+    pub fn new(vec: Vec<Box<dyn Hittable + Send + Sync + 'a>>) -> HittableList<'a> {
         HittableList { objects: vec }
     }
 
@@ -17,7 +14,7 @@ impl<'a> HittableList<'a> {
         HittableList { objects: vec![] }
     }
 
-    pub fn add<T: Hittable + 'a>(&mut self, obj: T) {
+    pub fn add<T: Hittable + Send + Sync + 'a>(&mut self, obj: T) {
         self.objects.push(Box::new(obj));
     }
 
