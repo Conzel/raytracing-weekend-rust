@@ -36,7 +36,11 @@ fn rand_coord(rng: &mut impl Rng) -> f64 {
 
 impl Vec3 {
     pub fn random_range(a: f64, b: f64, rng: &mut impl Rng) -> Vec3 {
-        Vec3::new(rng.gen_range(a..b), rng.gen_range(a..b), rng.gen_range(a..b))
+        Vec3::new(
+            rng.gen_range(a..b),
+            rng.gen_range(a..b),
+            rng.gen_range(a..b),
+        )
     }
 
     pub fn random_in_unit_cube(rng: &mut impl Rng) -> Vec3 {

@@ -24,7 +24,7 @@ impl Camera {
         vfov: Degree,
         aspect_ratio: f64,
         aperture: f64,
-        focus_dist: f64
+        focus_dist: f64,
     ) -> Camera {
         let theta = vfov.to_radians();
         let h = (theta / 2.0).tan();
