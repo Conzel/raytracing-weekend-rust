@@ -16,13 +16,13 @@ mod sphere;
 mod vec3;
 
 const ASPECT_RATIO: f64 = 3.0 / 2.0;
-const IMAGE_WIDTH: u32 = 500;
+const IMAGE_WIDTH: u32 = 1200;
 const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as u32;
-const MAX_REC_DEPTH: i32 = 20;
-const NUM_SAMPLES: i32 = 10;
+const MAX_REC_DEPTH: i32 = 50;
+const NUM_SAMPLES: i32 = 500;
 const GAMMA_CORRECTION: f64 = 2.0;
 const SHADOW_ACNE_TOLERANCE: f64 = 0.0001;
-const APERTURE: f64 = 0.1;
+const APERTURE: f64 = 0.12;
 const FOCUS_DIST: f64 = 10.0;
 
 fn ray_to_color(
