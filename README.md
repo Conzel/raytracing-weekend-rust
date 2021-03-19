@@ -23,4 +23,4 @@ The following explanations are for Linux.
 5. View the image using any desired image viewer, feh for example does the trick
 
 Example output (the image on the front of the book cover):
-![Book Cover Example](/final.png)
+![Book Cover example](/cover.png)
